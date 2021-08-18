@@ -54,19 +54,24 @@ var stripeHandler = StripeCheckout.configure({
                 stripeTokenId: token.id,
                 items: items
             })
+        }).then(function(res) {
+            return res.json()
+        }).then(function(data) {
+            alert(data.message)
+            var cartItems = document.getElementsByClassName('cart-items')[0]
+            while (cartItems.hasChildNodes()) {
+                cartItems.removeChild(cartItems.firstChild)
+            }
+            updateCartTotal()
+        }).catch(function(error) {
+            console.error(error)
         })
     }
 })
 
 function purchaseClicked() {
-    // alert('Thank you for your purchase')
-    // var cartItems = document.getElementsByClassName('cart-items')[0]
-    // while (cartItems.hasChildNodes()) {
-    //     cartItems.removeChild(cartItems.firstChild)
-    // }
-    // updateCartTotal()
-    let priceElement = document.getElementsByClassName('cart-total-price')[0]
-    let price = parseFloat(priceElement.innerHTML.replace('$', '')) * 100
+    var priceElement = document.getElementsByClassName('cart-total-price')[0]
+    var price = parseFloat(priceElement.innerText.replace('$', '')) * 100
     stripeHandler.open({
         amount: price
     })
@@ -93,7 +98,7 @@ function addToCartClicked(event) {
     var price = shopItem.getElementsByClassName('shop-item-price')[0].innerText
     var imageSrc = shopItem.getElementsByClassName('shop-item-image')[0].src
     var id = shopItem.dataset.itemId
-    addItemToCart(title, price, imageSrc)
+    addItemToCart(title, price, imageSrc, id)
     updateCartTotal()
 }
 

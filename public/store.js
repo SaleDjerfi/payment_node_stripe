@@ -26,29 +26,29 @@ function ready() {
     document.getElementsByClassName('btn-purchase')[0].addEventListener('click', purchaseClicked)
 }
 
-let stripeHandler = StripeCheckout.configure({
+var stripeHandler = StripeCheckout.configure({
     key: stripePublicKey,
     locale: 'en',
-    token: token => {
-        let items = []
-        let cartItemsContainer = document.getElementsByClassName('cart=items')[0]
-        let cartRows = cartItemsContainer.getElementsByClassName('cart-row')
-        for (let i = 0; i < cartRows.length; i++) {
-            let cartRow = cartRows[i] 
-            let quantityElement = cartRow.getElementsByClassName('cart-quantity-imput')[0]
-            let quantity = quantityElement.value
-            let id = cartRow.dataset.itemId
-            itemsms.push({
+    token: function(token) {
+        var items = []
+        var cartItemContainer = document.getElementsByClassName('cart-items')[0]
+        var cartRows = cartItemContainer.getElementsByClassName('cart-row')
+        for (var i = 0; i < cartRows.length; i++) {
+            var cartRow = cartRows[i]
+            var quantityElement = cartRow.getElementsByClassName('cart-quantity-input')[0]
+            var quantity = quantityElement.value
+            var id = cartRow.dataset.itemId
+            items.push({
                 id: id,
                 quantity: quantity
             })
         }
 
         fetch('/purchase', {
-            method: POST,
+            method: 'POST',
             headers: {
-                'Content-Type' : 'application/json',
-                'Accept' : 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 stripeTokenId: token.id,
@@ -68,7 +68,7 @@ function purchaseClicked() {
     let priceElement = document.getElementsByClassName('cart-total-price')[0]
     let price = parseFloat(priceElement.innerHTML.replace('$', '')) * 100
     stripeHandler.open({
-        amout: price
+        amount: price
     })
 }
 
